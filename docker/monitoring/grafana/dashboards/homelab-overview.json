@@ -4,7 +4,7 @@
   "tags": ["homelab", "overview"],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 2,
+  "version": 3,
   "refresh": "30s",
   "time": {"from": "now-6h", "to": "now"},
   "editable": true,
@@ -19,19 +19,20 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "label_replace(probe_success{job=\"blackbox_http\"}, \"service\", \"$1\", \"instance\", \".*://([^:/]+).*\")",
+          "expr": "label_replace(label_replace(probe_success{job=\"blackbox_http\"}, \"service\", \"$1\", \"instance\", \".*://([^:/]+).*\"), \"service\", \"plex\", \"service\", \"host.docker.internal\")",
           "legendFormat": "{{service}}",
           "instant": true
         }
       ],
       "options": {
-        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": true},
         "textMode": "value_and_name",
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "horizontal",
-        "wideLayout": false
+        "wideLayout": true,
+        "percentChangeColorMode": "standard"
       },
       "fieldConfig": {
         "defaults": {
@@ -54,12 +55,14 @@
         "reduceOptions": {"calcs": ["lastNotNull"]},
         "colorMode": "background_solid",
         "graphMode": "area",
-        "textMode": "value_and_name",
-        "justifyMode": "center"
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
       },
       "fieldConfig": {
         "defaults": {
           "unit": "percent",
+          "displayName": " ",
           "min": 0, "max": 100,
           "decimals": 1,
           "color": {"mode": "thresholds"},
@@ -82,12 +85,14 @@
         "reduceOptions": {"calcs": ["lastNotNull"]},
         "colorMode": "background_solid",
         "graphMode": "area",
-        "textMode": "value_and_name",
-        "justifyMode": "center"
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
       },
       "fieldConfig": {
         "defaults": {
           "unit": "percent",
+          "displayName": " ",
           "min": 0, "max": 100,
           "decimals": 1,
           "color": {"mode": "thresholds"},
@@ -110,12 +115,14 @@
         "reduceOptions": {"calcs": ["lastNotNull"]},
         "colorMode": "background_solid",
         "graphMode": "area",
-        "textMode": "value_and_name",
-        "justifyMode": "center"
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
       },
       "fieldConfig": {
         "defaults": {
           "unit": "percent",
+          "displayName": " ",
           "min": 0, "max": 100,
           "decimals": 1,
           "color": {"mode": "thresholds"},
@@ -138,12 +145,14 @@
         "reduceOptions": {"calcs": ["lastNotNull"]},
         "colorMode": "value",
         "graphMode": "area",
-        "textMode": "value_and_name",
-        "justifyMode": "center"
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
       },
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
+          "displayName": " ",
           "color": {"mode": "thresholds"},
           "thresholds": {"mode": "absolute", "steps": [
             {"color": "green", "value": null},
@@ -164,10 +173,11 @@
         "reduceOptions": {"calcs": ["lastNotNull"]},
         "colorMode": "none",
         "graphMode": "none",
-        "textMode": "value_and_name",
-        "justifyMode": "center"
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
       },
-      "fieldConfig": {"defaults": {"unit": "s", "color": {"mode": "fixed", "fixedColor": "blue"}}}
+      "fieldConfig": {"defaults": {"unit": "s", "displayName": " ", "color": {"mode": "fixed", "fixedColor": "blue"}}}
     },
     {
       "id": 15,
@@ -180,48 +190,45 @@
         "reduceOptions": {"calcs": ["lastNotNull"]},
         "colorMode": "none",
         "graphMode": "none",
-        "textMode": "value_and_name",
-        "justifyMode": "center"
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
       },
-      "fieldConfig": {"defaults": {"color": {"mode": "fixed", "fixedColor": "blue"}}}
+      "fieldConfig": {"defaults": {"displayName": " ", "color": {"mode": "fixed", "fixedColor": "blue"}}}
     },
     {
       "id": 16,
-      "title": "RAM used / total",
+      "title": "RAM total",
       "type": "stat",
       "gridPos": {"h": 3, "w": 5, "x": 5, "y": 10},
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "targets": [
-        {"refId": "A", "expr": "node_memory_active_bytes{job=\"node_mac\"} + node_memory_wired_bytes{job=\"node_mac\"} + node_memory_compressed_bytes{job=\"node_mac\"}", "legendFormat": "used"},
-        {"refId": "B", "expr": "node_memory_total_bytes{job=\"node_mac\"}", "legendFormat": "total"}
-      ],
+      "targets": [{"refId": "A", "expr": "node_memory_total_bytes{job=\"node_mac\"}"}],
       "options": {
         "reduceOptions": {"calcs": ["lastNotNull"]},
         "colorMode": "none",
         "graphMode": "none",
-        "textMode": "value_and_name",
-        "justifyMode": "center"
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
       },
-      "fieldConfig": {"defaults": {"unit": "bytes", "color": {"mode": "fixed", "fixedColor": "blue"}}}
+      "fieldConfig": {"defaults": {"unit": "bytes", "displayName": " ", "color": {"mode": "fixed", "fixedColor": "blue"}}}
     },
     {
       "id": 17,
-      "title": "Disk used / total",
+      "title": "Disk total",
       "type": "stat",
       "gridPos": {"h": 3, "w": 5, "x": 10, "y": 10},
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "targets": [
-        {"refId": "A", "expr": "node_filesystem_size_bytes{job=\"node_mac\",mountpoint=\"/\"} - node_filesystem_avail_bytes{job=\"node_mac\",mountpoint=\"/\"}", "legendFormat": "used"},
-        {"refId": "B", "expr": "node_filesystem_size_bytes{job=\"node_mac\",mountpoint=\"/\"}", "legendFormat": "total"}
-      ],
+      "targets": [{"refId": "A", "expr": "node_filesystem_size_bytes{job=\"node_mac\",mountpoint=\"/\"}"}],
       "options": {
         "reduceOptions": {"calcs": ["lastNotNull"]},
         "colorMode": "none",
         "graphMode": "none",
-        "textMode": "value_and_name",
-        "justifyMode": "center"
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
       },
-      "fieldConfig": {"defaults": {"unit": "bytes", "color": {"mode": "fixed", "fixedColor": "blue"}}}
+      "fieldConfig": {"defaults": {"unit": "bytes", "displayName": " ", "color": {"mode": "fixed", "fixedColor": "blue"}}}
     },
     {
       "id": 18,
@@ -234,10 +241,11 @@
         "reduceOptions": {"calcs": ["lastNotNull"]},
         "colorMode": "none",
         "graphMode": "none",
-        "textMode": "value_and_name",
-        "justifyMode": "center"
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
       },
-      "fieldConfig": {"defaults": {"unit": "bytes", "color": {"mode": "fixed", "fixedColor": "green"}}}
+      "fieldConfig": {"defaults": {"unit": "bytes", "displayName": " ", "color": {"mode": "fixed", "fixedColor": "green"}}}
     },
     {
       "id": 20,
@@ -262,7 +270,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "label_replace(probe_duration_seconds{job=\"blackbox_http\"}, \"service\", \"$1\", \"instance\", \".*://([^:/]+).*\")",
+          "expr": "label_replace(label_replace(probe_duration_seconds{job=\"blackbox_http\"}, \"service\", \"$1\", \"instance\", \".*://([^:/]+).*\"), \"service\", \"plex\", \"service\", \"host.docker.internal\")",
           "legendFormat": "{{service}}",
           "instant": true
         }
