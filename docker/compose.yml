@@ -3,4 +3,5 @@ include:
   - home/compose.yml
   - postgres/compose.yml
   - redis/compose.yml
+  - influxdb/compose.yml
   - paperless/compose.yml
