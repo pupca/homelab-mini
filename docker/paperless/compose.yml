@@ -1,24 +1,13 @@
 services:
-  paperless-redis:
-    image: redis:7-alpine
-    container_name: paperless-redis
-    command: ["redis-server", "--requirepass", "${PAPERLESS_REDIS_PASS}", "--save", "20", "1", "--loglevel", "warning"]
-    volumes:
-      - paperless_redis:/data
-    networks: [homelab]
-    restart: unless-stopped
-
   paperless:
     image: ghcr.io/paperless-ngx/paperless-ngx:1.17.0
     container_name: paperless
-    depends_on:
-      - paperless-redis
     environment:
       - USERMAP_UID=0
       - USERMAP_GID=0
       - PAPERLESS_TIME_ZONE=Europe/Prague
       - PAPERLESS_URL=https://paperless.home.pupca.cz
-      - PAPERLESS_REDIS=redis://:${PAPERLESS_REDIS_PASS}@paperless-redis:6379
+      - PAPERLESS_REDIS=redis://:${REDIS_PASS}@redis:6379
       - PAPERLESS_DBHOST=postgres
       - PAPERLESS_DBNAME=paperless
       - PAPERLESS_DBUSER=paperless
@@ -32,6 +21,3 @@ services:
       - "8001:8000/tcp"
     networks: [homelab]
     restart: unless-stopped
-
-volumes:
-  paperless_redis:
