@@ -1,0 +1,79 @@
+services:
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Europe/Prague
+      - USER=transmission
+      - PASS=${TRANSMISSION_PASS}
+    volumes:
+      - ../../data/transmission/config:/config
+      - ${MEDIA_ROOT}/movies:/data/torrents/movies
+      - ${MEDIA_ROOT}/tv-shows:/data/torrents/tv-shows
+      - ${MEDIA_ROOT}/books:/data/torrents/books
+      - ${MEDIA_ROOT}/downloads:/data/torrents/downloads
+    ports:
+      - "9092:9091/tcp"
+      - "51413:51413/tcp"
+      - "51413:51413/udp"
+    restart: unless-stopped
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Europe/Prague
+    volumes:
+      - ../../data/prowlarr/config:/config
+    ports:
+      - "9696:9696/tcp"
+    restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Europe/Prague
+    volumes:
+      - ../../data/sonarr/config:/config
+      - ${MEDIA_ROOT}/tv-shows:/data/torrents/tv-shows
+      - ${MEDIA_ROOT}/downloads:/data/torrents/downloads
+    ports:
+      - "8989:8989/tcp"
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Europe/Prague
+    volumes:
+      - ../../data/radarr/config:/config
+      - ${MEDIA_ROOT}/movies:/data/torrents/movies
+      - ${MEDIA_ROOT}/downloads:/data/torrents/downloads
+    ports:
+      - "7878:7878/tcp"
+    restart: unless-stopped
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Europe/Prague
+    volumes:
+      - ../../data/bazarr/config:/config
+      - ${MEDIA_ROOT}/movies:/data/torrents/movies
+      - ${MEDIA_ROOT}/tv-shows:/data/torrents/tv-shows
+    ports:
+      - "6767:6767/tcp"
+    restart: unless-stopped
