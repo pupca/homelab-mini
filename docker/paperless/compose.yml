@@ -7,6 +7,9 @@ services:
       - USERMAP_GID=0
       - PAPERLESS_TIME_ZONE=Europe/Prague
       - PAPERLESS_URL=https://paperless.home.pupca.cz
+      - PAPERLESS_ALLOWED_HOSTS=paperless.home.pupca.cz,192.168.20.20,localhost
+      - PAPERLESS_CORS_ALLOWED_HOSTS=https://paperless.home.pupca.cz,http://192.168.20.20:8001
+      - PAPERLESS_CSRF_TRUSTED_ORIGINS=https://paperless.home.pupca.cz,http://192.168.20.20:8001
       - PAPERLESS_REDIS=redis://:${REDIS_PASS}@redis:6379
       - PAPERLESS_DBHOST=postgres
       - PAPERLESS_DBNAME=paperless
