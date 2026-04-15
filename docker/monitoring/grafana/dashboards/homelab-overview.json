@@ -30,8 +30,8 @@
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
-        "orientation": "horizontal",
-        "wideLayout": true,
+        "orientation": "auto",
+        "wideLayout": false,
         "percentChangeColorMode": "standard"
       },
       "fieldConfig": {
