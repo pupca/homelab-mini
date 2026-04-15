@@ -20,6 +20,7 @@ services:
       - "9092:9091/tcp"
       - "51413:51413/tcp"
       - "51413:51413/udp"
+    networks: [homelab]
     restart: unless-stopped
 
   prowlarr:
@@ -33,6 +34,7 @@ services:
       - ../../data/prowlarr/config:/config
     ports:
       - "9696:9696/tcp"
+    networks: [homelab]
     restart: unless-stopped
 
   sonarr:
@@ -48,6 +50,7 @@ services:
       - ${MEDIA_ROOT}/downloads:/data/torrents/downloads
     ports:
       - "8989:8989/tcp"
+    networks: [homelab]
     restart: unless-stopped
 
   radarr:
@@ -63,6 +66,7 @@ services:
       - ${MEDIA_ROOT}/downloads:/data/torrents/downloads
     ports:
       - "7878:7878/tcp"
+    networks: [homelab]
     restart: unless-stopped
 
   bazarr:
@@ -78,8 +82,14 @@ services:
       - ${MEDIA_ROOT}/tv-shows:/data/torrents/tv-shows
     ports:
       - "6767:6767/tcp"
+    networks: [homelab]
     restart: unless-stopped
 
 volumes:
   transmission_downloads:
   transmission_watch:
+
+networks:
+  homelab:
+    external: true
+    name: homelab
