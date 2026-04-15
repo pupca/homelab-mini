@@ -198,11 +198,11 @@
     },
     {
       "id": 16,
-      "title": "RAM total",
+      "title": "RAM used",
       "type": "stat",
       "gridPos": {"h": 3, "w": 5, "x": 5, "y": 10},
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "targets": [{"refId": "A", "expr": "node_memory_total_bytes{job=\"node_mac\"}"}],
+      "targets": [{"refId": "A", "expr": "node_memory_active_bytes{job=\"node_mac\"} + node_memory_wired_bytes{job=\"node_mac\"} + node_memory_compressed_bytes{job=\"node_mac\"}"}],
       "options": {
         "reduceOptions": {"calcs": ["lastNotNull"]},
         "colorMode": "none",
@@ -215,11 +215,11 @@
     },
     {
       "id": 17,
-      "title": "Disk total",
+      "title": "Disk used",
       "type": "stat",
       "gridPos": {"h": 3, "w": 5, "x": 10, "y": 10},
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "targets": [{"refId": "A", "expr": "node_filesystem_size_bytes{job=\"node_mac\",mountpoint=\"/\"}"}],
+      "targets": [{"refId": "A", "expr": "node_filesystem_size_bytes{job=\"node_mac\",mountpoint=\"/\"} - node_filesystem_avail_bytes{job=\"node_mac\",mountpoint=\"/\"}"}],
       "options": {
         "reduceOptions": {"calcs": ["lastNotNull"]},
         "colorMode": "none",
@@ -248,10 +248,107 @@
       "fieldConfig": {"defaults": {"unit": "bytes", "displayName": " ", "color": {"mode": "fixed", "fixedColor": "green"}}}
     },
     {
+      "id": 50,
+      "title": "Docker VM CPU",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 13},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "sum(rate(container_cpu_usage_seconds_total{name!=\"\"}[5m])) / max(machine_cpu_cores) * 100"}],
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "colorMode": "background_solid",
+        "graphMode": "area",
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0, "max": 100,
+          "decimals": 1,
+          "displayName": " ",
+          "color": {"mode": "thresholds"},
+          "thresholds": {"mode": "absolute", "steps": [
+            {"color": "green", "value": null},
+            {"color": "yellow", "value": 60},
+            {"color": "red", "value": 85}
+          ]}
+        }
+      }
+    },
+    {
+      "id": 51,
+      "title": "Docker VM RAM",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 13},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "sum(container_memory_working_set_bytes{name!=\"\"}) / max(machine_memory_bytes) * 100"}],
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "colorMode": "background_solid",
+        "graphMode": "area",
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0, "max": 100,
+          "decimals": 1,
+          "displayName": " ",
+          "color": {"mode": "thresholds"},
+          "thresholds": {"mode": "absolute", "steps": [
+            {"color": "green", "value": null},
+            {"color": "yellow", "value": 70},
+            {"color": "red", "value": 90}
+          ]}
+        }
+      }
+    },
+    {
+      "id": 52,
+      "title": "VM RAM used / allocated",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 13},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {"refId": "A", "expr": "sum(container_memory_working_set_bytes{name!=\"\"})", "legendFormat": "used"},
+        {"refId": "B", "expr": "max(machine_memory_bytes)", "legendFormat": "allocated"}
+      ],
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "colorMode": "none",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "center",
+        "wideLayout": true
+      },
+      "fieldConfig": {"defaults": {"unit": "bytes", "color": {"mode": "fixed", "fixedColor": "blue"}}}
+    },
+    {
+      "id": 53,
+      "title": "VM cores",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 13},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "max(machine_cpu_cores)"}],
+      "options": {
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "colorMode": "none",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "center",
+        "wideLayout": true
+      },
+      "fieldConfig": {"defaults": {"displayName": " ", "color": {"mode": "fixed", "fixedColor": "blue"}}}
+    },
+    {
       "id": 20,
       "title": "Load average",
       "type": "timeseries",
-      "gridPos": {"h": 7, "w": 12, "x": 0, "y": 13},
+      "gridPos": {"h": 7, "w": 12, "x": 0, "y": 17},
       "datasource": {"type": "prometheus", "uid": "prometheus"},
       "targets": [
         {"refId": "A", "expr": "node_load1{job=\"node_mac\"}", "legendFormat": "1m"},
@@ -265,7 +362,7 @@
       "id": 21,
       "title": "Service response time",
       "type": "bargauge",
-      "gridPos": {"h": 7, "w": 12, "x": 12, "y": 13},
+      "gridPos": {"h": 7, "w": 12, "x": 12, "y": 17},
       "datasource": {"type": "prometheus", "uid": "prometheus"},
       "targets": [
         {
@@ -299,7 +396,7 @@
       "id": 30,
       "title": "Container CPU",
       "type": "timeseries",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
       "datasource": {"type": "prometheus", "uid": "prometheus"},
       "targets": [
         {"refId": "A", "expr": "sum by (name) (rate(container_cpu_usage_seconds_total{name!=\"\"}[5m])) * 100", "legendFormat": "{{name}}"}
@@ -316,7 +413,7 @@
       "id": 31,
       "title": "Container RAM",
       "type": "timeseries",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
       "datasource": {"type": "prometheus", "uid": "prometheus"},
       "targets": [
         {"refId": "A", "expr": "sum by (name) (container_memory_working_set_bytes{name!=\"\"})", "legendFormat": "{{name}}"}
@@ -333,7 +430,7 @@
       "id": 40,
       "title": "Containers",
       "type": "table",
-      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 28},
+      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 32},
       "datasource": {"type": "prometheus", "uid": "prometheus"},
       "targets": [
         {"refId": "CPU", "expr": "sum by (name) (rate(container_cpu_usage_seconds_total{name!=\"\"}[5m])) * 100", "instant": true, "format": "table"},
