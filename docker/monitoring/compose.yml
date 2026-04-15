@@ -26,6 +26,7 @@ services:
       - TZ=Europe/Prague
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
       - ../../data/grafana:/var/lib/grafana
     ports:
       - "3000:3000/tcp"
