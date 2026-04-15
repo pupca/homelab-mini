@@ -1,0 +1,16 @@
+services:
+  wud:
+    image: getwud/wud:latest
+    container_name: wud
+    hostname: wud
+    environment:
+      - TZ=Europe/Prague
+      - WUD_WATCHER_LOCAL_SOCKET=/var/run/docker.sock
+      - WUD_WATCHER_LOCAL_CRON=0 */6 * * *
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ../../data/wud:/store
+    ports:
+      - "3003:3000"
+    networks: [homelab]
+    restart: unless-stopped

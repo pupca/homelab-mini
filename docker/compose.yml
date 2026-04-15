@@ -6,4 +6,5 @@ include:
   - influxdb/compose.yml
   - paperless/compose.yml
   - vaultwarden/compose.yml
+  - wud/compose.yml
   - monitoring/compose.yml
