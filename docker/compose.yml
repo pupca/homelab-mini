@@ -5,4 +5,5 @@ include:
   - redis/compose.yml
   - influxdb/compose.yml
   - paperless/compose.yml
+  - vaultwarden/compose.yml
   - monitoring/compose.yml

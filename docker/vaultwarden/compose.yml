@@ -1,0 +1,13 @@
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    environment:
+      - ROCKET_PORT=80
+      - TZ=Europe/Prague
+    volumes:
+      - ../../data/vaultwarden:/data
+    ports:
+      - "8983:80/tcp"
+    networks: [homelab]
+    restart: unless-stopped
