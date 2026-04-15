@@ -1,6 +1,6 @@
 services:
   paperless:
-    image: ghcr.io/paperless-ngx/paperless-ngx:1.17.0
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.14
     container_name: paperless
     environment:
       - USERMAP_UID=0
