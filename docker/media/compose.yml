@@ -10,6 +10,8 @@ services:
       - PASS=${TRANSMISSION_PASS}
     volumes:
       - ../../data/transmission/config:/config
+      - transmission_downloads:/downloads
+      - transmission_watch:/watch
       - ${MEDIA_ROOT}/movies:/data/torrents/movies
       - ${MEDIA_ROOT}/tv-shows:/data/torrents/tv-shows
       - ${MEDIA_ROOT}/books:/data/torrents/books
@@ -77,3 +79,7 @@ services:
     ports:
       - "6767:6767/tcp"
     restart: unless-stopped
+
+volumes:
+  transmission_downloads:
+  transmission_watch:
