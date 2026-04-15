@@ -3,7 +3,7 @@ modules:
     prober: http
     timeout: 5s
     http:
-      valid_status_codes: [200, 301, 302, 401, 403]
+      valid_status_codes: [200, 301, 302, 401, 403, 404]
       method: GET
       preferred_ip_protocol: ip4
       fail_if_ssl: false
