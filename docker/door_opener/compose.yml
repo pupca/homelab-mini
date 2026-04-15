@@ -1,0 +1,17 @@
+services:
+  door_opener:
+    image: pupca/door_opener:latest
+    container_name: door_opener
+    environment:
+      - MQTT_HOST=${DOOR_OPENER_MQTT_HOST}
+      - MQTT_PORT=1883
+      - MQTT_USERNAME=${DOOR_OPENER_MQTT_USER}
+      - MQTT_PASSWORD=${DOOR_OPENER_MQTT_PASS}
+      - MQTT_TOPIC=Bticino/rx
+      - MQTT_PAYLOAD=*8*19*20##
+      - TOKEN=${DOOR_OPENER_TOKEN}
+    command: ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
+    ports:
+      - "5001:5000/tcp"
+    networks: [homelab]
+    restart: unless-stopped

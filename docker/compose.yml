@@ -7,4 +7,5 @@ include:
   - paperless/compose.yml
   - vaultwarden/compose.yml
   - wud/compose.yml
+  - door_opener/compose.yml
   - monitoring/compose.yml
