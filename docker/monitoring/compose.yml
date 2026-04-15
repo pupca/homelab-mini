@@ -1,0 +1,58 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=30d
+      - --web.enable-lifecycle
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../../data/prometheus:/prometheus
+    ports:
+      - "9090:9090/tcp"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks: [homelab]
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASS}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - TZ=Europe/Prague
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ../../data/grafana:/var/lib/grafana
+    ports:
+      - "3000:3000/tcp"
+    networks: [homelab]
+    restart: unless-stopped
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    command: ["--docker_only=true", "--housekeeping_interval=30s"]
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    networks: [homelab]
+    restart: unless-stopped
+
+  blackbox:
+    image: prom/blackbox-exporter:latest
+    container_name: blackbox
+    volumes:
+      - ./blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
+    command:
+      - --config.file=/etc/blackbox_exporter/config.yml
+    networks: [homelab]
+    restart: unless-stopped

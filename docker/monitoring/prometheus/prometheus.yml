@@ -1,0 +1,46 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: prometheus
+    static_configs:
+      - targets: [localhost:9090]
+
+  # Mac host metrics (native node_exporter via brew on the Mac)
+  - job_name: node_mac
+    static_configs:
+      - targets: [host.docker.internal:9100]
+        labels:
+          host: mac-mini
+
+  # Container metrics
+  - job_name: cadvisor
+    static_configs:
+      - targets: [cadvisor:8080]
+
+  # HTTP probes — service up/down via blackbox
+  - job_name: blackbox_http
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://transmission:9091/
+          - http://prowlarr:9696/
+          - http://sonarr:8989/
+          - http://radarr:7878/
+          - http://bazarr:6767/
+          - http://paperless:8000/
+          - http://homeassistant:8123/
+          - http://influxdb:8086/health
+          - http://host.docker.internal:32400/web
+          - http://host.docker.internal:8001/
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
