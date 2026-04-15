@@ -1,0 +1,20 @@
+services:
+  homeassistant:
+    image: lscr.io/linuxserver/homeassistant:2024.6.4
+    container_name: homeassistant
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=Europe/Prague
+    volumes:
+      - ../../data/homeassistant/config:/config
+    ports:
+      - "8123:8123/tcp"
+    networks:
+      - homelab
+    restart: unless-stopped
+
+networks:
+  homelab:
+    external: true
+    name: homelab
