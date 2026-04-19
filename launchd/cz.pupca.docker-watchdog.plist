@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>cz.pupca.docker-watchdog</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/pupca/projects/homelab/mini/scripts/docker-watchdog.sh</string>
+    </array>
+    <key>UserName</key>
+    <string>pupca</string>
+    <key>StartInterval</key>
+    <integer>300</integer>
+    <key>StandardOutPath</key>
+    <string>/var/log/cz.pupca.docker-watchdog.log</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/cz.pupca.docker-watchdog.log</string>
+</dict>
+</plist>
