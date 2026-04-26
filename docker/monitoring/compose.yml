@@ -36,15 +36,13 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
-    command: ["--docker_only=true", "--housekeeping_interval=30s"]
+    command:
+      - --docker_only=true
+      - --housekeeping_interval=30s
+      - --docker=unix:///var/run/docker.sock
     volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     privileged: true
-    devices:
-      - /dev/kmsg
     networks: [homelab]
     restart: unless-stopped
 
