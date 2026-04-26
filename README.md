@@ -11,7 +11,7 @@ Configuration for the Mac mini homelab server (`pupcas-Mac-mini.local`, 192.168.
 ## Current state
 
 - **NAS media mount**: `192.168.20.14:/mnt/nas/media` mounted at `/Users/pupca/media` via `cz.pupca.mount-media` LaunchDaemon at boot. Colima auto-exposes `$HOME` to the VM, so containers see it for free.
-- **Container runtime**: colima profile `headless-mac-server` (managed by the headless-mac-server framework elsewhere on the machine). Networking: `address: true` + `socket_vmnet` so containers can reach LAN hosts (e.g. ubuntu @ 192.168.20.8) — without this, default slirp user-mode networking refuses same-subnet LAN traffic. See `colima/colima.yaml.reference`.
+- **Container runtime**: OrbStack (replaced colima — more stable, native LAN networking without socket_vmnet). Auto-starts at login. Containers reach LAN hosts natively.
 - **Native apps**: Plex Media Server (HW transcoding via VideoToolbox). Auto-starts via Login Items + auto-login for `pupca`.
 - **Docker stacks**:
   - `docker/media/` — transmission, prowlarr, sonarr, radarr, bazarr. Shared external `homelab` network.

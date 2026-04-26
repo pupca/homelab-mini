@@ -19,8 +19,6 @@
         <string>/Users/pupca</string>
         <key>PATH</key>
         <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
-        <key>DOCKER_HOST</key>
-        <string>unix:///Users/pupca/.colima/headless-mac-server/docker.sock</string>
     </dict>
     <key>StandardOutPath</key>
     <string>/Users/pupca/projects/homelab/mini/logs/docker-watchdog.log</string>
