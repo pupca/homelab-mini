@@ -1,6 +1,6 @@
 #!/bin/bash
 # Watchdog: checks if Docker inside colima is responsive.
-# If not, restarts colima and brings compose up.
+# Handles both crashes (dockerd dead) AND hangs (dockerd alive but unresponsive).
 # Runs every 5 min via LaunchDaemon.
 export PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 export HOME=/Users/pupca
@@ -11,29 +11,43 @@ LOG="/Users/pupca/projects/homelab/mini/logs/docker-watchdog.log"
 COMPOSE_DIR="/Users/pupca/projects/homelab/mini/docker"
 
 mkdir -p "$(dirname "$LOG")"
-
 ts() { date '+%Y-%m-%d %H:%M:%S'; }
 
-# Quick check — if Docker responds, everything is fine
-if docker info >/dev/null 2>&1; then
+# Check docker with 10s timeout (catches both dead AND hung daemon)
+check_docker() {
+    docker info >/dev/null 2>&1 &
+    local pid=$!
+    ( sleep 10; kill $pid 2>/dev/null ) &
+    local timer=$!
+    if wait $pid 2>/dev/null; then
+        kill $timer 2>/dev/null
+        wait $timer 2>/dev/null
+        return 0
+    else
+        kill $timer 2>/dev/null
+        wait $timer 2>/dev/null
+        return 1
+    fi
+}
+
+# Quick check — if Docker responds within 10s, everything is fine
+if check_docker; then
     exit 0
 fi
 
-echo "[$(ts)] Docker unresponsive. Attempting recovery..." >> "$LOG"
+echo "[$(ts)] Docker unresponsive (dead or hung). Attempting recovery..." >> "$LOG"
 
-# Check if colima VM is running
-if colima status --profile "$PROFILE" >/dev/null 2>&1; then
-    echo "[$(ts)] Colima VM is up but Docker is dead. Restarting colima..." >> "$LOG"
-    colima stop --profile "$PROFILE" >> "$LOG" 2>&1
-    sleep 5
-fi
+# Always stop+start colima (handles both crash and hang)
+echo "[$(ts)] Stopping colima..." >> "$LOG"
+colima stop --profile "$PROFILE" --force >> "$LOG" 2>&1
+sleep 5
 
 echo "[$(ts)] Starting colima..." >> "$LOG"
 colima start --profile "$PROFILE" >> "$LOG" 2>&1
 sleep 20
 
 # Verify Docker is back
-if ! docker info >/dev/null 2>&1; then
+if ! check_docker; then
     echo "[$(ts)] CRITICAL: Docker still not responding after colima restart!" >> "$LOG"
     exit 1
 fi
