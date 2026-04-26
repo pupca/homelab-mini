@@ -39,9 +39,10 @@ services:
     command:
       - --docker_only=true
       - --housekeeping_interval=30s
-      - --docker=unix:///var/run/docker.sock
+      - --containerd=/var/run/docker/containerd/containerd.sock
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
     privileged: true
     networks: [homelab]
     restart: unless-stopped
